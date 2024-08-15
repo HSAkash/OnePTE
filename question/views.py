@@ -1,12 +1,9 @@
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from .models import (
-    Audio,
-    Question_SST,
-    Question_RO,
-    Question_RMMCQ,
-    Options_RO,
-    Options_RMMCQ,
+    Question,
     Answer,
 )
 
@@ -25,26 +22,38 @@ from .serializers import (
     # Options_ROSerializer,
     Question_RMMCQSerializer,
     # Options_RMMCQSerializer,
-    # AnswerSerializer
+    # AnswerSerializer,
+    QuestionListSerializer
 )
 
 
 # Retrieved details view Question_SST
-class Question_SSTDetail(generics.RetrieveAPIView):
-    queryset = Question_SST.objects.all()
+class Question_SSTDetailView(generics.RetrieveAPIView):
+    queryset = Question.objects.filter(question_type__title='sst')
     serializer_class = Question_SSTSerializer
     lookup_field = 'id'
 
 
 # Retrieve details view Question_RO
-class Question_RODetail(generics.RetrieveAPIView):
-    queryset = Question_RO.objects.all()
+class Question_RODetailView(generics.RetrieveAPIView):
+    queryset = Question.objects.filter(question_type__title='ro')
     serializer_class = Question_ROSerializer
     lookup_field = 'id'
 
 
 # Retrieve details view Question_RMMCQ
-class Question_RMMCQDetail(generics.RetrieveAPIView):
-    queryset = Question_RMMCQ.objects.all()
+class Question_RMMCQDetailView(generics.RetrieveAPIView):
+    queryset = Question.objects.filter(question_type__title='rmmcq')
     serializer_class = Question_RMMCQSerializer
     lookup_field = 'id'
+
+# List questions view
+class QuestionListView(generics.ListAPIView):
+    serializer_class = QuestionListSerializer
+    queryset = Question.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('question_type',)
+
+
+
+

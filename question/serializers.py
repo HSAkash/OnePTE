@@ -1,12 +1,10 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from .models import (
+    QuestionType,
     Audio,
-    Question_SST,
-    Question_RO,
-    Question_RMMCQ,
-    Options_RO,
-    Options_RMMCQ,
+    Question,
+    Options,
     Answer,
 )
 
@@ -27,14 +25,14 @@ class Question_SSTSerializer(serializers.ModelSerializer):
     # next_question_url
     next = serializers.SerializerMethodField()
     class Meta:
-        model = Question_SST
+        model = Question
         fields = ('id', 'title', 'time_limit', 'audio', 'pre', 'next')
 
     def get_pre(self, obj):
         """
         Get URL of the previous question.
         """
-        pre = Question_SST.objects.filter(id__lt=obj.id).order_by('-id').first()
+        pre = Question.objects.filter(id__lt=obj.id, question_type__title='sst').order_by('-id').first()
         return None if pre is None else reverse('api_question:question_sst_detail', kwargs={'id': pre.id}, request=self.context.get('request'))
         # return None if pre is None else pre.id
 
@@ -42,7 +40,7 @@ class Question_SSTSerializer(serializers.ModelSerializer):
         """
         Get URL of the next question.
         """
-        next = Question_SST.objects.filter(id__gt=obj.id).order_by('id').first()
+        next = Question.objects.filter(id__gt=obj.id, question_type__title='sst').order_by('id').first()
         # return None if next is None else next.id
         return None if next is None else reverse('api_question:question_sst_detail', kwargs={'id': next.id}, request=self.context.get('request'))
     
@@ -50,28 +48,28 @@ class Question_SSTSerializer(serializers.ModelSerializer):
 
 
 """________________Re-Order Paragraph (RO) Question Serializer___________________"""
-class Options_ROSerializer(serializers.ModelSerializer):
+class OptionsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Options_RO
+        model = Options
         fields = ('id', 'title')
 
 
 class Question_ROSerializer(serializers.ModelSerializer):
-    options_ro = Options_ROSerializer(many=True, read_only=True)
+    question_options = OptionsSerializer(many=True, read_only=True)
     # previous_question_url
     pre = serializers.SerializerMethodField()
     # next_question_url
     next = serializers.SerializerMethodField()
     class Meta:
-        model = Question_RO
-        fields = ('id', 'title', 'options_ro', 'pre', 'next')
+        model = Question
+        fields = ('id', 'title', 'question_options', 'pre', 'next')
 
 
     def get_pre(self, obj):
         """
         Get URL of the previous question.
         """
-        pre = Question_SST.objects.filter(id__lt=obj.id).order_by('-id').first()
+        pre = Question.objects.filter(id__lt=obj.id, question_type__title='ro').order_by('-id').first()
         return None if pre is None else reverse('api_question:question_sst_detail', kwargs={'id': pre.id}, request=self.context.get('request'))
         # return None if pre is None else pre.id
 
@@ -79,7 +77,7 @@ class Question_ROSerializer(serializers.ModelSerializer):
         """
         Get URL of the next question.
         """
-        next = Question_SST.objects.filter(id__gt=obj.id).order_by('id').first()
+        next = Question.objects.filter(id__gt=obj.id, question_type__title='ro').order_by('id').first()
         # return None if next is None else next.id
         return None if next is None else reverse('api_question:question_sst_detail', kwargs={'id': next.id}, request=self.context.get('request'))
     
@@ -87,27 +85,24 @@ class Question_ROSerializer(serializers.ModelSerializer):
 
 
 """________________Reading Multiple Choice (Multiple) (RMMCQ)___________________"""
-class Options_RMMCQSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Options_RMMCQ
-        fields = ('id', 'title')
+
 
 
 class Question_RMMCQSerializer(serializers.ModelSerializer):
-    options_rmmcq = Options_RMMCQSerializer(many=True, read_only=True)
+    question_options = OptionsSerializer(many=True, read_only=True)
     # previous_question_url
     pre = serializers.SerializerMethodField()
     # next_question_url
     next = serializers.SerializerMethodField()
     class Meta:
-        model = Question_RMMCQ
-        fields = ('id', 'title', 'options_rmmcq', 'pre', 'next')
+        model = Question
+        fields = ('id', 'title', 'question_options', 'pre', 'next')
 
     def get_pre(self, obj):
         """
         Get URL of the previous question.
         """
-        pre = Question_SST.objects.filter(id__lt=obj.id).order_by('-id').first()
+        pre = Question.objects.filter(id__lt=obj.id, question_type__title='rmmcq').order_by('-id').first()
         return None if pre is None else reverse('api_question:question_sst_detail', kwargs={'id': pre.id}, request=self.context.get('request'))
         # return None if pre is None else pre.id
 
@@ -115,13 +110,14 @@ class Question_RMMCQSerializer(serializers.ModelSerializer):
         """
         Get URL of the next question.
         """
-        next = Question_SST.objects.filter(id__gt=obj.id).order_by('id').first()
+        next = Question.objects.filter(id__gt=obj.id, question_type__title='rmmcq').order_by('id').first()
         # return None if next is None else next.id
         return None if next is None else reverse('api_question:question_sst_detail', kwargs={'id': next.id}, request=self.context.get('request'))
     
 
 
-
-
-
-
+class QuestionListSerializer(serializers.ModelSerializer):
+    question_type__title = serializers.CharField(source='question_type.title')
+    class Meta:
+        model = Question
+        fields = ('id', 'title', 'question_type__title')
