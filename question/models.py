@@ -1,4 +1,8 @@
 from django.db import models
+# use django settings auth user model
+from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 
 # Audio File Upload Location
 def upload_location(instance, filename, **kwargs):
@@ -118,3 +122,26 @@ class Options_RMMCQ(models.Model):
 
     
 
+"""___________________Answering Models__________________________"""
+
+
+class Answer(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='answers')
+    
+    # Generic Foreign Key to any Question model
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    question_id = models.PositiveIntegerField()
+    question = GenericForeignKey('content_type', 'question_id')
+    
+    answer = models.TextField()
+    score = models.FloatField(default=0.0)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Answer'
+        verbose_name_plural = 'Answers'
+        ordering = ['content_type']
+
+    def __str__(self):
+        return f"{self.question} - {self.created_at}"

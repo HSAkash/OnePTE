@@ -6,6 +6,10 @@ from .models import (
     Question_RMMCQ,
     Options_RO,
     Options_RMMCQ,
+    # Answer_SST,
+    # Answer_RO,
+    # Answer_RMMCQ,
+    Answer,
 )
 import admin_thumbnails
 from django.core.exceptions import ValidationError
@@ -26,7 +30,7 @@ class AudioInline(admin.TabularInline):
 
 
 class AudioAdmin(admin.ModelAdmin):
-    list_display = ['speaker', 'location', 'audio', 'created_at', 'updated_at']
+    list_display = ['id', 'speaker', 'location', 'audio', 'created_at', 'updated_at']
     search_fields = ['speaker', 'location']
     list_filter = ['speaker', 'location']
     list_per_page = 10
@@ -35,7 +39,7 @@ admin.site.register(Audio, AudioAdmin)
 
 
 class Question_SSTAdmin(admin.ModelAdmin):
-    list_display = ['title', 'time_limit', 'created_at', 'updated_at']
+    list_display = ['id', 'title', 'time_limit', 'created_at', 'updated_at']
     search_fields = ['title']
     list_filter = ['title']
     list_per_page = 10
@@ -59,7 +63,7 @@ class OptionsRO_Inline(admin.TabularInline):
 
 
 class Question_ROAdmin(admin.ModelAdmin):
-    list_display = ['title', 'created_at', 'updated_at']
+    list_display = ['id', 'title', 'created_at', 'updated_at']
     search_fields = ['title']
     list_filter = ['title']
     list_per_page = 10
@@ -90,10 +94,27 @@ class OptionsRMMCQ_Inline(admin.TabularInline):
 
 
 class Question_RMMCQAdmin(admin.ModelAdmin):
-    list_display = ['title', 'created_at', 'updated_at']
+    list_display = ['id', 'title', 'created_at', 'updated_at']
     search_fields = ['title']
     list_filter = ['title']
     list_per_page = 10
     inlines = [OptionsRMMCQ_Inline]
 
 admin.site.register(Question_RMMCQ, Question_RMMCQAdmin)
+
+
+
+"""___________________Answering Models__________________________"""
+
+# Register Answer model
+class AnswerAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'content_type', 'question_id', 'answer', 'created_at']
+    search_fields = ['user__username', 'content_type__model', 'question_id']
+    list_filter = ['user', 'content_type']
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # Example: Add more complex filtering logic here if needed
+        return qs
+
+admin.site.register(Answer, AnswerAdmin)
