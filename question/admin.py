@@ -6,9 +6,6 @@ from .models import (
     Question_RMMCQ,
     Options_RO,
     Options_RMMCQ,
-    # Answer_SST,
-    # Answer_RO,
-    # Answer_RMMCQ,
     Answer,
 )
 import admin_thumbnails
