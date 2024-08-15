@@ -8,6 +8,8 @@ from .models import (
     Options_RMMCQ,
 )
 import admin_thumbnails
+from django.core.exceptions import ValidationError
+from django.contrib import messages
 
 
 
@@ -62,6 +64,13 @@ class Question_ROAdmin(admin.ModelAdmin):
     list_filter = ['title']
     list_per_page = 10
     inlines = [OptionsRO_Inline]
+
+    # Signal implementation for Question_RO
+    def save_model(self, request, obj, form, change):
+        try:
+            super().save_model(request, obj, form, change)
+        except ValidationError as e:
+            self.message_user(request, str(e), level=messages.ERROR)
 
 admin.site.register(Question_RO, Question_ROAdmin)
 
