@@ -143,15 +143,6 @@ else:
 
     # PostgreSQL database configuration
     # https://docs.djangoproject.com/en/5.0/ref/databases/#postgresql-notes
-    # print(f"""
-    # NAME: {os.getenv("DB_NAME")}
-    # USER: {os.getenv("DB_USER")}
-    # PASSWORD: {os.getenv("DB_PASS")}
-    # HOST: {os.getenv("DB_HOST")}
-    # PORT: {os.getenv("DB_PORT")}
-    # type: {type(os.getenv("DB_PORT"))}
-
-    # """)
 
     DATABASES = {
         "default": {
