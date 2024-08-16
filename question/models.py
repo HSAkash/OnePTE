@@ -18,7 +18,7 @@ class QuestionType(models.Model):
         return f"{self.title} - {self.full_name}"
 
 
-
+# Question model
 class Question(models.Model):
     question_type = models.ForeignKey(
         QuestionType, on_delete=models.CASCADE, related_name='question_type', blank=True)
@@ -87,7 +87,7 @@ class Answer(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='answers')
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
     answer = models.TextField(max_length=1000, blank=True, null=True)
-    score = models.FloatField(default=0.0)
+    score = models.CharField(max_length=100, blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

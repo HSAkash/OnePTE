@@ -27,7 +27,7 @@ admin.site.register(QuestionType, QuestionTypeAdmin)
 class AudioInline(admin.TabularInline):
     """
     Inline class for Audio model.
-    Add Audio in Question_SST model in admin panel.(Same page)
+    Add Audio in  model in admin panel.(Same page)
     """
     model = Audio
     extra = 1
@@ -38,8 +38,8 @@ class AudioInline(admin.TabularInline):
 @admin_thumbnails.thumbnail('title')
 class Options_Inline(admin.TabularInline):
     """
-    Inline class for Options_RO model.
-    Add Options in Question_RO model in admin panel.(Same page)
+    Inline class for Options model.
+    Add Options in Question model in admin panel.(Same page)
     """
     model = Options
     extra = 1
@@ -62,7 +62,7 @@ admin.site.register(Question, QuestionAdmin)
 
 # Register Answer model
 class AnswerAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'question', 'score',]
+    list_display = ['id', 'user', "question__id", 'question', 'score',]
     search_fields = ['user__username', 'question_title']
     list_filter = ['user', 'question']
 

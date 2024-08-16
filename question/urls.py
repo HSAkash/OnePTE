@@ -1,16 +1,19 @@
 from django.urls import path
 from .views import (
-    Question_SSTDetailView,
-    Question_RODetailView,
-    Question_RMMCQDetailView,
+    QuestionDetailView,
     QuestionListView,
+    HistoryAnswerListView,
+    QuestionAnswerListView,
+    AnswerCreateView,
 )
 
 app_name = 'api_question'
 
 urlpatterns = [
-    path('sst/<int:id>/', Question_SSTDetailView.as_view(), name='question_sst_detail'),
-    path('ro/<int:id>/', Question_RODetailView.as_view(), name='question_ro_detail'),
-    path('rmmcq/<int:id>/', Question_RMMCQDetailView.as_view(), name='question_rmmcq_detail'),
+    
+    path('detail/<str:question_type>/<str:id>/', QuestionDetailView.as_view(), name='question_detail'),
+    path('answer/create/<int:question__id>/', AnswerCreateView.as_view(), name='answer_create'),
+    path('answer/<int:question__id>/', QuestionAnswerListView.as_view(), name='question_answer_list'),
     path('list/', QuestionListView.as_view(), name='question_list'),  # List all questions
+    path('history/', HistoryAnswerListView.as_view(), name='history_answer_list'), 
 ]

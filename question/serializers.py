@@ -20,30 +20,9 @@ class AudioSerializer(serializers.ModelSerializer):
 
 class Question_SSTSerializer(serializers.ModelSerializer):
     audio = AudioSerializer(many=True, read_only=True)
-    # previous_question_url
-    pre = serializers.SerializerMethodField()
-    # next_question_url
-    next = serializers.SerializerMethodField()
     class Meta:
         model = Question
-        fields = ('id', 'title', 'time_limit', 'audio', 'pre', 'next')
-
-    def get_pre(self, obj):
-        """
-        Get URL of the previous question.
-        """
-        pre = Question.objects.filter(id__lt=obj.id, question_type__title='sst').order_by('-id').first()
-        return None if pre is None else reverse('api_question:question_sst_detail', kwargs={'id': pre.id}, request=self.context.get('request'))
-        # return None if pre is None else pre.id
-
-    def get_next(self, obj):
-        """
-        Get URL of the next question.
-        """
-        next = Question.objects.filter(id__gt=obj.id, question_type__title='sst').order_by('id').first()
-        # return None if next is None else next.id
-        return None if next is None else reverse('api_question:question_sst_detail', kwargs={'id': next.id}, request=self.context.get('request'))
-    
+        fields = ('id', 'title', 'time_limit', 'audio')
 
 
 
@@ -56,31 +35,9 @@ class OptionsSerializer(serializers.ModelSerializer):
 
 class Question_ROSerializer(serializers.ModelSerializer):
     question_options = OptionsSerializer(many=True, read_only=True)
-    # previous_question_url
-    pre = serializers.SerializerMethodField()
-    # next_question_url
-    next = serializers.SerializerMethodField()
     class Meta:
         model = Question
-        fields = ('id', 'title', 'question_options', 'pre', 'next')
-
-
-    def get_pre(self, obj):
-        """
-        Get URL of the previous question.
-        """
-        pre = Question.objects.filter(id__lt=obj.id, question_type__title='ro').order_by('-id').first()
-        return None if pre is None else reverse('api_question:question_sst_detail', kwargs={'id': pre.id}, request=self.context.get('request'))
-        # return None if pre is None else pre.id
-
-    def get_next(self, obj):
-        """
-        Get URL of the next question.
-        """
-        next = Question.objects.filter(id__gt=obj.id, question_type__title='ro').order_by('id').first()
-        # return None if next is None else next.id
-        return None if next is None else reverse('api_question:question_sst_detail', kwargs={'id': next.id}, request=self.context.get('request'))
-    
+        fields = ('id', 'title', 'question_options')
 
 
 
@@ -90,30 +47,9 @@ class Question_ROSerializer(serializers.ModelSerializer):
 
 class Question_RMMCQSerializer(serializers.ModelSerializer):
     question_options = OptionsSerializer(many=True, read_only=True)
-    # previous_question_url
-    pre = serializers.SerializerMethodField()
-    # next_question_url
-    next = serializers.SerializerMethodField()
     class Meta:
         model = Question
-        fields = ('id', 'title', 'question_options', 'pre', 'next')
-
-    def get_pre(self, obj):
-        """
-        Get URL of the previous question.
-        """
-        pre = Question.objects.filter(id__lt=obj.id, question_type__title='rmmcq').order_by('-id').first()
-        return None if pre is None else reverse('api_question:question_sst_detail', kwargs={'id': pre.id}, request=self.context.get('request'))
-        # return None if pre is None else pre.id
-
-    def get_next(self, obj):
-        """
-        Get URL of the next question.
-        """
-        next = Question.objects.filter(id__gt=obj.id, question_type__title='rmmcq').order_by('id').first()
-        # return None if next is None else next.id
-        return None if next is None else reverse('api_question:question_sst_detail', kwargs={'id': next.id}, request=self.context.get('request'))
-    
+        fields = ('id', 'title', 'question_options')
 
 
 class QuestionListSerializer(serializers.ModelSerializer):
@@ -121,3 +57,18 @@ class QuestionListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = ('id', 'title', 'question_type__title')
+
+
+"""________________Answer Serializer___________________"""
+
+# Answer  serializer
+class AnswerSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField()
+    class Meta:
+        model = Answer
+        fields = ('id', 'username', 'answer', 'score')
+        read_only_fields = ('username', 'score', 'id',)
+
+    def get_username(self, obj):
+        return obj.user.username
+
